@@ -1,28 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import fakeData from '../../fakeData'
 import { addToDatabaseCart, getDatabaseCart } from '../../utilities/databaseManager';
 import Cart from '../Cart/Cart';
 import Product from '../Product/Product';
 import { Link } from 'react-router-dom';
 import './Shop.css'
+import Loader from '../Loader/Loader'
 
 const Shop = () => {
-    const first10 = fakeData.slice(0, 10)
-    const [products, setProducts] = useState(first10)
+    const [products, setProducts] = useState([])
     const [cart, setCart] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
+    document.title = 'shop more'
+
+    useEffect(() => {
+        fetch('https://fierce-hamlet-80213.herokuapp.com/products')
+            .then(res => res.json())
+            .then(data => setProducts(data))
+    }, [])
 
     // set data in local storage...
     useEffect(() => {
         const savedCart = getDatabaseCart();
         const productKeys = Object.keys(savedCart);
 
-        const previousCart = productKeys.map(existingKey => {
-            const product = fakeData.find(pd => pd.key === existingKey);
-            product.quantity = savedCart[existingKey]
-            return product;
+        fetch('https://fierce-hamlet-80213.herokuapp.com/productsByKeys', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(productKeys)
         })
-        // console.log(savedCart);
-        setCart(previousCart)
+            .then(res => res.json())
+            .then(data => setCart(data))
+        // if (products.length) {
+        //     const previousCart = productKeys.map(existingKey => {
+        //         const product = products.find(pd => pd.key === existingKey);
+        //         product.quantity = savedCart[existingKey]
+        //         return product;
+        //     })
+        //     setCart(previousCart)
+        // }
     }, [])
 
     const handleAddProduct = (product) => {
@@ -41,21 +58,17 @@ const Shop = () => {
             newCart = [...cart, product]
         }
         setCart(newCart);
-
-        // that's all for local storage....
         addToDatabaseCart(product.key, count)
-        // ..............
     }
     return (
         <div className='twin-container'>
             <div className="product-container">
-                {
-                    products.map(product => <Product
-                        key={product.key}
-                        product={product}
-                        showAddToCart={true}
-                        handleAddProduct={handleAddProduct}
-                    ></Product>)
+                {products.map(product => <Product
+                    key={product.key}
+                    product={product}
+                    showAddToCart={true}
+                    handleAddProduct={handleAddProduct}
+                ></Product>)
                 }
             </div>
             <div className="cart-container">
@@ -65,7 +78,6 @@ const Shop = () => {
                     </Link>
                 </Cart>
             </div>
-
         </div>
     );
 };
