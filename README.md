@@ -20,4 +20,4 @@
 + MongoDB
 + Firebase Authentication
 
-### [Back-end Repository](https://github.com/ShahinurAlamBhuiyan/imazon-simple-server)
+### [Back-end Repository](https://github.com/ShahinurAlamBhuiyan/ima-zon-simple-server)
