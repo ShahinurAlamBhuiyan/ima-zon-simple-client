@@ -1,6 +1,5 @@
 import firebase from "firebase/app";
 import "firebase/auth";
-import { unstable_renderSubtreeIntoContainer } from "react-dom";
 import firebaseConfig from './firebase.config';
 
 
