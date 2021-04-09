@@ -12,7 +12,7 @@ const Shop = () => {
     document.title = 'shop more'
 
     useEffect(() => {
-        fetch('http://localhost:4000/products?search='+search)
+        fetch('https://fierce-hamlet-80213.herokuapp.com/products?search='+search)
             .then(res => res.json())
             .then(data => setProducts(data))
     }, [search])
