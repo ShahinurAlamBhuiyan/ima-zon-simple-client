@@ -23,6 +23,7 @@ export const handleGoogleSignIn = () => {
                 photo: photoURL,
                 success: true
             }
+            setUserToken(); 
             return signedInUser;
         })
         .catch(err => {
@@ -32,12 +33,23 @@ export const handleGoogleSignIn = () => {
 }
 
 
+const setUserToken = () => {
+    firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function (idToken) {
+        sessionStorage.setItem('token', idToken)
+        // ...
+    }).catch(function (error) {
+        // Handle error
+    });
+}
+
+
 export const handleFbSignIn = () => {
     const fbProvider = new firebase.auth.FacebookAuthProvider();
     return firebase.auth().signInWithPopup(fbProvider)
         .then((result) => {
             var user = result.user;
             user.success = true;
+            setUserToken(); 
             return user;
         })
         .catch((error) => {
@@ -70,6 +82,7 @@ export const createUserWithEmailAndPassword = (name, email, password) => {
             newUserInfo.error = '';
             newUserInfo.success = true;
             updateUserName(name);
+            setUserToken(); 
             return newUserInfo;
         })
         .catch((error) => {
@@ -87,6 +100,7 @@ export const signInWithEmailAndPassword = (email, password) => {
             const newUserInfo = res.user;
             newUserInfo.error = '';
             newUserInfo.success = true;
+            setUserToken(); 
             return newUserInfo
         })
         .catch((error) => {

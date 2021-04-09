@@ -4,19 +4,18 @@ import Cart from '../Cart/Cart';
 import Product from '../Product/Product';
 import { Link } from 'react-router-dom';
 import './Shop.css'
-import Loader from '../Loader/Loader'
 
 const Shop = () => {
     const [products, setProducts] = useState([])
     const [cart, setCart] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [ search, setSearch ] = useState('')
     document.title = 'shop more'
 
     useEffect(() => {
-        fetch('https://fierce-hamlet-80213.herokuapp.com/products')
+        fetch('http://localhost:4000/products?search='+search)
             .then(res => res.json())
             .then(data => setProducts(data))
-    }, [])
+    }, [search])
 
     // set data in local storage...
     useEffect(() => {
@@ -60,9 +59,15 @@ const Shop = () => {
         setCart(newCart);
         addToDatabaseCart(product.key, count)
     }
+
+    const handleSearch = (event) => {
+        setSearch(event.target.value)
+    }
+
     return (
         <div className='twin-container'>
             <div className="product-container">
+                <input type="text" onBlur={handleSearch} className="product-container" placeholder='search your product...' />
                 {products.map(product => <Product
                     key={product.key}
                     product={product}
